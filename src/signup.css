@@ -1,0 +1,11 @@
+.signup-form {
+    padding: 90px;
+    width: 900px;
+    text-align: center;
+  }
+  
+  .signup-form .MuiTypography-h4 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  

@@ -14,41 +14,10 @@ import front from './front.jpeg';
 import about from './aboutus.png';
 import { Paper, Grid } from '@mui/material';
 import './App.css';
-const itemData = [
-  {
-    img: 'https://images.unsplash.com/photo-1601758123927-4a36c0e29d63',
-    title: 'Flood',
-    author: 'John Doe',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1588092317190-96f8e8a4c263',
-    title: 'Earthquake Aftermath',
-    author: 'Jane Smith',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914',
-    title: 'Fire Response',
-    author: 'Michael Johnson',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1559087316-36d9fb2d82e3',
-    title: 'Tornado',
-    author: 'Linda Carter',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1501644898240-aaf0d3e76542',
-    title: 'Flood Rescue',
-    author: 'Tom Smith',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1579705745864-8509c275b849',
-    title: 'Wildfire',
-    author: 'Alice Brown',
-  },
-];
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
-
+  const navigate = useNavigate();
 
   // Navigation Functions for external links
   const openInstagram = () => {
@@ -65,27 +34,30 @@ export default function Home() {
 
   const features = [
     {
-      name: 'Real-Time Disaster Monitoring',
-      content: 'View real-time data on natural disasters, including live updates on weather patterns, seismic activities, and flood warnings.',
+      name: 'Journey Anomaly Detection',
+      content: 'Identify irregularities in planned routes, providing alerts for potentially unsafe or unusual paths.',
+      route:'/anomoly'
     },
     {
-      name: 'AI-Driven Predictions',
-      content: 'Our AI models predict the likelihood of future disasters, allowing communities to prepare in advance.',
+      name: 'Proximity Alert',
+      content: 'Receive alerts when specific individuals or objects approach a defined safe or danger zone.',
+      route:'/safety-dashboard'
     },
     {
-      name: 'Multi-Channel Alerts',
-      content: 'Receive instant notifications via SMS, social media, or email about disaster updates and safety precautions.',
+      name: 'Area and Crowd Flagging',
+      content: 'Monitor crowd density and flag areas with potential risks, helping manage safety in real-time.',
+
     },
     {
-      name: 'Community-Based Alerts',
-      content: "Enable local communities to share updates, receive real-time alerts, and coordinate evacuation or response efforts.",
+      name: 'Fake Call',
+      content: 'Trigger a simulated call as a safety feature, providing a discreet way to signal distress or seek help.',
     },
     {
-      name: 'User-Friendly Dashboards',
-      content: 'Monitor real-time disaster data, track emergency response efforts, and access resource allocation insights on one intuitive dashboard.',
+      name: 'Mental Health Chatbot',
+      content: 'Access a supportive chatbot for mental health resources, providing guidance and help in stressful situations.',
     },
   ];
-
+  
   // Mission Statements
   const mission = [
     {
@@ -134,7 +106,7 @@ export default function Home() {
       </Box>
    {/* Navigation Bar */}
    <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" sx={{ marginTop: 2, backgroundColor: "black", color: 'white' }}>
+        <AppBar position="static" sx={{ marginTop: 2, backgroundColor: "black", color: 'white' ,textAlign:'center'}}>
           <Box sx={{ height: '100px', justifyContent: "center", alignContent: 'center' }}>
             <Button href="#home" title="Home" sx={{ color: 'white' }}>Home</Button>
             <Button href="#about" title="About Us" sx={{ color: 'white' }}>About Us</Button>
@@ -178,8 +150,9 @@ export default function Home() {
     </Typography>
     <Box sx={{ display: 'flex', justifyContent: 'space-around', gap: '20px' }}>
       {features.map((feature, index) => (
-        <Paper
+        <Button
           key={index}
+          onClick={() => navigate(feature.route)}
           sx={{
             padding: '10px',
             backgroundColor: '#08343f',
@@ -190,11 +163,10 @@ export default function Home() {
             textAlign: 'center',
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '5px' ,textAlign: 'center',color:'white'}}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: '5px' ,textAlign: 'center',color:'white'}}>
             {feature.name}
           </Typography>
-          <Typography variant="body2" sx={{color:'white'}}>{feature.content}</Typography>
-        </Paper>
+         </Button>
       ))}
     </Box>
   </Box>

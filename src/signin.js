@@ -1,38 +1,115 @@
-// SignIn.js
-import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Container, CircularProgress, Paper } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, TextField, Button, Typography, CircularProgress, Paper } from '@mui/material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import GoogleIcon from '@mui/icons-material/Google'; // Ensure you have this icon
+import GoogleIcon from '@mui/icons-material/Google';
+import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { ref, set } from 'firebase/database';
+import { auth, db } from './firebase';  // Ensure firebase is properly initialized in your firebase.js
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const errorMessage = "An error occurred during sign in"; // Define your error message here
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setLoading(true);
-    // Handle sign-in logic here
-    console.log("Sign In Submitted");
-    
-    // Simulate an asynchronous sign-in operation
-    setTimeout(() => {
-      setLoading(false);
-      // Example logic: setError(true) to trigger error state
-    }, 2000);
+  // Function to store location in Firebase
+  const storeLocation = async (email, latitude, longitude) => {
+    const userRef = ref(db, `users/${email.replace('.', ',')}/location`); // Firebase Realtime DB keys cannot contain '.'
+    await set(userRef, { latitude, longitude, timestamp: Date.now() });
   };
 
-  const handleGoogleSignIn = () => {
-    // Implement Google sign-in logic here
-    console.log("Google Sign In");
+  // Function to track and store location every 5 seconds
+  const startLocationTracking = (email) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          storeLocation(email, latitude, longitude);
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        }
+      );
+    } else {
+      console.error('Geolocation not supported');
+    }
+
+    const intervalId = setInterval(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            storeLocation(email, latitude, longitude);
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+          }
+        );
+      } else {
+        console.error('Geolocation not supported');
+      }
+    }, 5000); // 5 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  };
+
+  // Handle email and password sign-in
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(false);
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Save email to local storage
+      localStorage.setItem('userEmail', user.email);
+
+      // Start location tracking after sign-in
+      startLocationTracking(user.email);
+
+      navigate('/home');
+    } catch (err) {
+      setError(true);
+      setErrorMessage(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Google sign-in
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(false);
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      const user = userCredential.user;
+
+      // Save email to local storage
+      localStorage.setItem('userEmail', user.email);
+
+      // Start location tracking after sign-in
+      startLocationTracking(user.email);
+
+      navigate('/home');
+    } catch (err) {
+      setError(true);
+      setErrorMessage(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSignUp = () => {
-    // Redirect to sign up page or implement sign-up logic
-    console.log("Sign Up Redirect");
+    navigate('/signup');
   };
 
   return (
@@ -79,9 +156,8 @@ const SignIn = () => {
             sx={{ input: { color: 'white' }, label: { color: 'white' } }}
           />
           
-          {/* Display loading spinner or error messages */}
           {loading && <CircularProgress />}
-          {error && <Typography color="error">{errorMessage}</Typography>}
+          {error && <Typography color="error" align="center">{errorMessage}</Typography>}
 
           <Button
             fullWidth
@@ -91,6 +167,17 @@ const SignIn = () => {
             disabled={loading}
           >
             Sign In
+          </Button>
+
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ backgroundColor: '#0d7b7d', marginTop: '20px' }}
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            startIcon={<GoogleIcon />}
+          >
+            Sign In with Google
           </Button>
 
           <Button
