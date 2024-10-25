@@ -1,0 +1,19 @@
+.signin-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+  }
+  
+  .signin-form {
+    padding: 40px;
+    width: 650px;
+    text-align: center;
+  }
+  
+  .signin-form .MuiTypography-h4 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
