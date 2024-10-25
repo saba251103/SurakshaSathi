@@ -15,7 +15,7 @@ import about from './aboutus.png';
 import { Paper, Grid } from '@mui/material';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
-
+import LogoutIcon from '@mui/icons-material/Logout';
 export default function Home() {
   const navigate = useNavigate();
 
@@ -98,9 +98,13 @@ export default function Home() {
             <IconButton size="large" edge="start" color="#c9c7b8" aria-label="menu" sx={{ mr: 4 ,backgroundColor:'white'}} onClick={openX}>
               <X />
             </IconButton>
-            <IconButton size="large" edge="start" color="#c9c7b8" aria-label="menu" sx={{ mr: 2 ,backgroundColor:'white'}} onClick={openFacebook}>
+            <IconButton size="large" edge="start" color="#c9c7b8" aria-label="menu" sx={{ mr: 4 ,backgroundColor:'white'}} onClick={openFacebook}>
               <Facebook />
             </IconButton>
+            <IconButton size="large" edge="start" color="#c9c7b8" aria-label="menu" sx={{ mr: 4 ,backgroundColor:'white'}} onClick={openFacebook}>
+              <LogoutIcon/>
+            </IconButton>
+
           </Toolbar>
         </AppBar>
       </Box>
