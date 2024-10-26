@@ -3,11 +3,15 @@ import os
 import replicate
 import time
 import threading
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
+api_key = config.get("llama_key")
 
 app = Flask(__name__)
 
 # Ensure the Replicate API token is set
-api_token = "r8_Xcc0LUQufmYvSvXpgdsAulpCkwSyrIH0G8SqR"
+api_token = api_key
 os.environ["REPLICATE_API_TOKEN"] = api_token
 
 # Initialize the Replicate client with the API token
