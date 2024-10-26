@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 100vh; /* Make the map full height */
+            width: 100%; /* Make the map full width */
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // Initialize the map and set center to Mumbai
+        var map = L.map('map').setView([19.0760, 72.8777], 12);  // Center of Mumbai
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Updated data array for Mumbai with cases faced by women
+        var data = [
+            {"location": "Marine Drive", "latitude": 18.9964, "longitude": 72.8258, "safety_rating": 5, "cases": 2, "crowd_density": "high"},
+            {"location": "Dadar", "latitude": 19.0379, "longitude": 72.8432, "safety_rating": 4, "cases": 5, "crowd_density": "medium"},
+            {"location": "Andheri", "latitude": 19.1204, "longitude": 72.8347, "safety_rating": 3, "cases": 8, "crowd_density": "high"},
+            {"location": "Colaba", "latitude": 18.9212, "longitude": 72.8337, "safety_rating": 5, "cases": 1, "crowd_density": "high"},
+            {"location": "Versova", "latitude": 19.1605, "longitude": 72.8350, "safety_rating": 3, "cases": 4, "crowd_density": "medium"},
+            {"location": "Sion", "latitude": 19.0422, "longitude": 72.8552, "safety_rating": 2, "cases": 7, "crowd_density": "low"},
+            {"location": "Bandra", "latitude": 19.0595, "longitude": 72.8344, "safety_rating": 4, "cases": 3, "crowd_density": "low"},
+            {"location": "Juhu Beach", "latitude": 19.0950, "longitude": 72.8265, "safety_rating": 5, "cases": 0, "crowd_density": "high"},
+            {"location": "Ghatkopar", "latitude": 19.0838, "longitude": 72.9246, "safety_rating": 3, "cases": 5, "crowd_density": "medium"},
+            {"location": "Kandivali", "latitude": 19.1942, "longitude": 72.8371, "safety_rating": 2, "cases": 6, "crowd_density": "low"},
+            {"location": "Malabar Hill", "latitude": 18.9517, "longitude": 72.8055, "safety_rating": 4, "cases": 2, "crowd_density": "medium"},
+            {"location": "Worli", "latitude": 19.0176, "longitude": 72.8170, "safety_rating": 5, "cases": 1, "crowd_density": "high"},
+            {"location": "Powai", "latitude": 19.1197, "longitude": 72.9051, "safety_rating": 4, "cases": 3, "crowd_density": "medium"},
+            {"location": "Chembur", "latitude": 19.0623, "longitude": 72.8997, "safety_rating": 3, "cases": 4, "crowd_density": "medium"},
+            {"location": "Nariman Point", "latitude": 18.9242, "longitude": 72.8247, "safety_rating": 5, "cases": 1, "crowd_density": "high"},
+            {"location": "Thane", "latitude": 19.2183, "longitude": 72.9781, "safety_rating": 3, "cases": 3, "crowd_density": "medium"},
+            {"location": "Borivali", "latitude": 19.2307, "longitude": 72.8560, "safety_rating": 3, "cases": 2, "crowd_density": "low"},
+            {"location": "Mulund", "latitude": 19.1726, "longitude": 72.9566, "safety_rating": 4, "cases": 2, "crowd_density": "medium"},
+            {"location": "Chhatrapati Shivaji Maharaj Terminus", "latitude": 18.9402, "longitude": 72.8355, "safety_rating": 5, "cases": 0, "crowd_density": "high"},
+            {"location": "Cuffe Parade", "latitude": 18.9105, "longitude": 72.8205, "safety_rating": 4, "cases": 3, "crowd_density": "medium"},
+            {"location": "Navi Mumbai", "latitude": 19.0330, "longitude": 73.0297, "safety_rating": 3, "cases": 4, "crowd_density": "medium"},
+            {"location": "Mira Road", "latitude": 19.2812, "longitude": 72.8680, "safety_rating": 2, "cases": 5, "crowd_density": "low"},
+            {"location": "Churchgate", "latitude": 18.9353, "longitude": 72.8268, "safety_rating": 5, "cases": 1, "crowd_density": "high"},
+            {"location": "Bandra Kurla Complex", "latitude": 19.0667, "longitude": 72.8644, "safety_rating": 4, "cases": 2, "crowd_density": "high"},
+            {"location": "Kurla", "latitude": 19.0655, "longitude": 72.8795, "safety_rating": 3, "cases": 3, "crowd_density": "medium"},
+            {"location": "Charni Road", "latitude": 18.9543, "longitude": 72.8156, "safety_rating": 4, "cases": 1, "crowd_density": "medium"},
+            {"location": "Kalbadevi", "latitude": 18.9507, "longitude": 72.8275, "safety_rating": 3, "cases": 5, "crowd_density": "high"},
+            {"location": "Chor Bazaar", "latitude": 18.9614, "longitude": 72.8258, "safety_rating": 2, "cases": 4, "crowd_density": "high"},
+            {"location": "Mazgaon", "latitude": 18.9624, "longitude": 72.8425, "safety_rating": 3, "cases": 2, "crowd_density": "medium"},
+            {"location": "Vikhroli", "latitude": 19.1008, "longitude": 72.9287, "safety_rating": 3, "cases": 3, "crowd_density": "medium"}
+        ];
+
+        // Loop through each location in the data
+        data.forEach(function(location) {
+            var color;
+            var safetyRating = parseInt(location.safety_rating); // Convert safety rating to integer
+
+            if (safetyRating <= 2) {
+                color = "red";    // Unsafe areas
+            } else if (safetyRating <= 4) {
+                color = "yellow"; // Moderately safe areas
+            } else {
+                color = "green";  // Safe areas
+            }
+
+            // Create a circle with a fixed radius in meters for each location
+            L.circle([parseFloat(location.latitude), parseFloat(location.longitude)], {
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.3,
+                radius: 500 // Radius in meters (remains fixed in actual size on map)
+            }).addTo(map).bindPopup(location.location + 
+                "<br>Safety Rating: " + location.safety_rating + 
+                "<br>Cases Faced by Women: " + location.cases);
+        });
+    </script>
+</body>
+</html>
