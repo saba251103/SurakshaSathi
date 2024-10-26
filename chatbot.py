@@ -15,7 +15,7 @@ api_token = api_key
 os.environ["REPLICATE_API_TOKEN"] = api_token
 
 # Initialize the Replicate client with the API token
-replicate_client = replicate.Client()
+replicate_client = replicate.Client(api_token)
 
 # Function to interact with the LLaMA model
 def chat_with_llama(user_input):
